@@ -26,8 +26,10 @@ print(Connection_Message.decode("utf-8"))
 
 #----- Now that the connection has been confirmed, we ask the user to input what we need;-----------
 while True:
+    Debug = input('Do you wish to be in debug mode (1 -> yes / 0-> no)')
+    
    # Available commands : Help, BYE, PUT file.txt, GET file.txt, Change Text1.txt Text2.txt
-    Option= input('Please input which request you would like to send: ')
+    Option= input('\nPlease input which request you would like to send: ')
     if Option.upper() == "BYE": 
         #send a BYE request
         client.shutdown(2)
@@ -38,15 +40,19 @@ while True:
         #Send a HELP request
         TempEncodingByte = "01100000"
         client.sendall(TempEncodingByte.encode())
-        print(f"The Help request has been successfully sent."
-        
-        )
+        if Debug == 1:
+            print(f"The request sent is {TempEncodingByte}")
+        print(f"The Help request has been successfully sent.")
         #This Received Request is the reception of the message sent by the Server with the information to display. 
         ReceivedRequest=client.recv(8).decode()
         if ReceivedRequest[0:3]=="110":
             length=ReceivedRequest[3:]
             Data=client.recv(int(length,2)).decode()
             print(Data)
+        if Debug == 1:
+            print(f'The request sent is {TempEncodingByte}')
+            print(f'The received message is {ReceivedRequest}')
+
 
     
 # the else has been decided this way since the first 2 option do not require any FileName, therefore they are easy to parse as command. The next command need special parsing.
@@ -98,6 +104,14 @@ while True:
             Reponse=client.recv(8).decode()[0:3] 
             if Reponse=="000":
                 print(f"The File was succesfully uploaded on the server with response Op_code {Reponse} ")
+            
+            if Debug == 1:
+                print(f'The request sent is {TempEncodingByte}')
+                print(f'The name of the file sent is{Name_of_file+Extension}')
+                print(f'The received message is {Reponse}')
+
+
+
 
 
         elif Request.upper() == "GET" :
@@ -119,6 +133,9 @@ while True:
             print(f"The current client has asked to fetch {Name_of_file} from the server ") 
             client.sendall(TempEncodingByte.encode())
             client.sendall((Name_of_file + Extension).encode())
+            
+
+
 
 
 
@@ -153,6 +170,12 @@ while True:
                 print(f"The File requested does not exist , error code {ReceivedOpCode}")
 
             
+            if Debug == 1:
+                print(f'The request sent is {TempEncodingByte}')
+                print(f'The name of the file sent is{Name_of_file+Extension}')
+                print(f'The received message is {ReceivedOpCode}')
+                print(f'The received response is {ReceivedResponse}')
+                print(f'The received file lenght is {ReceivedFileNameLength}')
 
 
 
@@ -228,7 +251,13 @@ while True:
 
 
             continue
-
+        if Debug == 1:
+            print(f'The request sent is {OpCode}')
+            print(f'The name of the first file sent is{Name_of_first_file + Extension_of_first_file}')
+            print(f'The first file name lenght sent is {First_fileNameLength }')
+            print(f'The name of the second file sent is{Name_of_Second_file+Extension_of_Second_file}')
+            print(f'The second file name lenght sent is {Second_fileNameLength }')
+            print(f'The received response is {Reponse}')
 
 
 
