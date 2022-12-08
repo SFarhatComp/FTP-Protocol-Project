@@ -29,6 +29,8 @@ while True:
     serversocket,address =server.accept()  #When a connection is received, store the value in client socket and store their source address in address
     print(f"Connection from {address} has been established ! ")
     serversocket.send(bytes("Welcome to the server!","utf-8"))
+    Debug = input('Do you wish to be in debug mode (1 -> yes / 0-> no)')
+
     
     while True:
     
@@ -40,6 +42,8 @@ while True:
         
             
         if Op_code =="": #If ever we receive nothing as an opcode, it means we have asked for a close from the server side 
+            if Debug == 1:
+                print(f'Nothing was received, nothing was sent \n Closing connection with {address}')
             break
 
 
@@ -57,6 +61,11 @@ while True:
 
             serversocket.send(("110"+Help_data_Length).encode())
             serversocket.send(Help_data.encode())
+
+            if Debug == 1:
+                print(f'The received request is {Op_code}')
+                print(f'This is what is sent and outputted to the user : ' + Help_data)
+                print(f'The message sent is 110 ' + Help_data_Length)
             
 
         elif Op_code=="000":
@@ -92,6 +101,12 @@ while True:
         
             serversocket.send(("00000000").encode())
 
+            if Debug == 1:
+                print(f'The received request is {Op_code}')
+                print(f'The name of the file received is {file_name}')
+                print(f'The file name lenght received is {File_Name_Length}')
+                print(f'The message sent is 00000000')
+
 
 
 
@@ -117,12 +132,24 @@ while True:
 
                 #Sending the data and the endstring in order to make sure it has been properly received
                 print(f"The file has been succesfully fetched and sent back to {address}")
+                if Debug == 1:
+                    print(f'The received request is {Op_code}')
+                    print(f'The name of the file received is {file_name}')
+                    print(f'The final name lenght received is {File_Name_Length}')
+                    print(f'The message sent is 001')
 
 
             else:
             
                 serversocket.send(("01000000").encode())
                 print("The client has asked for a file that does not exist")
+                if Debug == 1:
+                    print(f'The received request is {Op_code}')
+                    print(f'The name of the file received is {file_name}')
+                    print(f'The file name lenght received is {File_Name_Length}')
+                    print(f'The message sent is 01000000')
+
+                
 
 
 
@@ -150,15 +177,27 @@ while True:
 
                 print(f"The file has been changed from {oldName} to {NewName} ")
                 serversocket.send(("00000000").encode())
+                if Debug == 1:
+                    print(f'The received request is {Op_code}')
+                    print(f'The message sent is 00000000')
+                    print(f'The name of the file received is {oldName}')
+                    print(f'The file name lenght received is {File_Name_Length}')
+                    print(f'The new file name sent is {NewName}')
             
             else : 
                 
                 serversocket.send(("11000000").encode())
                 print("The file to change does not exist ")
-
+                if Debug == 1:
+                    print(f'The received request is {Op_code}')
+                    print(f'The message sent is 11000000')
+        
         elif Op_code=="111":
 
             serversocket.send(("01100000").encode())
+            if Debug == 1:
+                    print(f'The received request is {Op_code}')
+                    print(f'The message sent is 01100000')
 
             
 
