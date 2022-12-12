@@ -7,10 +7,10 @@ end_string=b"<40097236>"
 
 #Asking the user to input the Clients IP and Port 
 print("Welcome to the client side, please tell us which IP Address and port number you would like to Access")
-# Ip=input("IP: ")
-# Port=int(input("Port: "))
-Ip="127.0.1.1"
-Port=9999
+Ip=input("IP: ")
+Port=int(input("Port: "))
+# # Ip="127.0.1.1"
+# Port=9999
 
 
 #-------Creating connection patterns for the client to connect to the server.-------------------- 
@@ -22,11 +22,11 @@ client.connect(Connection)
 Connection_Message=client.recv(1024)
 print(Connection_Message.decode("utf-8"))   
 
-
+Debug = int(input('Do you wish to be in debug mode (1 -> yes / 0-> no) :  '))
 
 #----- Now that the connection has been confirmed, we ask the user to input what we need;-----------
 while True:
-    Debug = input('Do you wish to be in debug mode (1 -> yes / 0-> no)')
+  
     
    # Available commands : Help, BYE, PUT file.txt, GET file.txt, Change Text1.txt Text2.txt
     Option= input('\nPlease input which request you would like to send: ')
@@ -40,8 +40,6 @@ while True:
         #Send a HELP request
         TempEncodingByte = "01100000"
         client.sendall(TempEncodingByte.encode())
-        if Debug == 1:
-            print(f"The request sent is {TempEncodingByte}")
         print(f"The Help request has been successfully sent.")
         #This Received Request is the reception of the message sent by the Server with the information to display. 
         ReceivedRequest=client.recv(8).decode()
@@ -50,7 +48,8 @@ while True:
             Data=client.recv(int(length,2)).decode()
             print(Data)
         if Debug == 1:
-            print(f'The request sent is {TempEncodingByte}')
+            print("----------------------THE FOLLOWING MESSAGES ARE PART OF THE DEBUG CONFIG------------------")
+            print(f"The request sent is {TempEncodingByte}")
             print(f'The received message is {ReceivedRequest}')
 
 
@@ -103,9 +102,11 @@ while True:
             
             Reponse=client.recv(8).decode()[0:3] 
             if Reponse=="000":
+                
                 print(f"The File was succesfully uploaded on the server with response Op_code {Reponse} ")
             
             if Debug == 1:
+                print("----------------------THE FOLLOWING MESSAGES ARE PART OF THE DEBUG CONFIG------------------")
                 print(f'The request sent is {TempEncodingByte}')
                 print(f'The name of the file sent is{Name_of_file+Extension}')
                 print(f'The received message is {Reponse}')
@@ -155,8 +156,7 @@ while True:
 
                 while not Finished:
                     data_received=client.recv(1024)
-                    #print(f"The Current Data received is {data_received}")
-                    #print(f"The current value of  File Byte is : {file_bytes}")
+                    
                     file_bytes+=data_received
                     if file_bytes[-10:] == b"<40097236>":
                         Finished = True
@@ -165,18 +165,19 @@ while True:
                 file.write(file_bytes[0:-10])
                 file.close()
                 print("The transfer of the file is finished")    
-            
+                if Debug == 1:
+                    print("----------------------THE FOLLOWING MESSAGES ARE PART OF THE DEBUG CONFIG------------------")
+                    print(f'The request sent is {TempEncodingByte}')
+                    print(f'The name of the file sent is{Name_of_file+Extension}')
+                    print(f'The received message is {ReceivedOpCode}')
+                    print(f'The received response is {ReceivedResponse}')
+                    print(f'The received file lenght is {ReceivedFileNameLength}')
+
             else: 
                 print(f"The File requested does not exist , error code {ReceivedOpCode}")
 
             
-            if Debug == 1:
-                print(f'The request sent is {TempEncodingByte}')
-                print(f'The name of the file sent is{Name_of_file+Extension}')
-                print(f'The received message is {ReceivedOpCode}')
-                print(f'The received response is {ReceivedResponse}')
-                print(f'The received file lenght is {ReceivedFileNameLength}')
-
+            
 
 
         elif Request.upper() == "CHANGE" :
@@ -231,15 +232,20 @@ while True:
             if Reponse=="000":
                 print(f"The Files name were succesfully changed on the server with response Op_code {Reponse} ")
 
-
+                if Debug == 1:
+                    print("----------------------THE FOLLOWING MESSAGES ARE PART OF THE DEBUG CONFIG------------------")
+                    print(f'The request sent is {OpCode}')
+                    print(f'The name of the first file sent is{Name_of_first_file + Extension_of_first_file}')
+                    print(f'The first file name lenght sent is {First_fileNameLength }')
+                    print(f'The name of the second file sent is{Name_of_Second_file+Extension_of_Second_file}')
+                    print(f'The second file name lenght sent is {Second_fileNameLength }')
+                    print(f'The received response is {Reponse}')
 
 
             else: 
                 print("There was an error changing the file name. The file you requested for a change does not exist ")
 
         else:
-
-
             client.send("11100000".encode())
 
 
@@ -251,13 +257,7 @@ while True:
 
 
             continue
-        if Debug == 1:
-            print(f'The request sent is {OpCode}')
-            print(f'The name of the first file sent is{Name_of_first_file + Extension_of_first_file}')
-            print(f'The first file name lenght sent is {First_fileNameLength }')
-            print(f'The name of the second file sent is{Name_of_Second_file+Extension_of_Second_file}')
-            print(f'The second file name lenght sent is {Second_fileNameLength }')
-            print(f'The received response is {Reponse}')
+       
 
 
 
