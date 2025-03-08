@@ -1,4 +1,4 @@
-# COEN366Project
+# 
 TCP Socket FTP Protocol
 This repository contains a Python implementation of a TCP Socket FTP (File Transfer Protocol) protocol. The code allows a client to connect to a server and perform various operations such as GET, PUT, CHANGE, BYE, and HELP commands.
 
